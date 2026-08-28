@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TornDash — Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%9B%A0%EF%B8%8F</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- ============ "Supabase not configured" notice ============ -->
+  <main id="notConfigured" class="view view--landing" hidden>
+    <div class="landing-card">
+      <div class="brand"><i class="fa-solid fa-screwdriver-wrench"></i><span>Torn<strong>Dash</strong> Admin</span></div>
+      <h1>Backend not configured</h1>
+      <p class="subtitle">Add your Supabase details to <code>config.js</code>, then reload this page.</p>
+      <div class="notice">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>See <strong>SETUP.md</strong> for the full walkthrough: create a project, run <strong>supabase-schema.sql</strong>, add an admin user, and paste your URL + anon key into <code>config.js</code>.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ LOGIN ============ -->
+  <main id="adminLogin" class="view view--landing" hidden>
+    <div class="landing-card">
+      <div class="brand"><i class="fa-solid fa-screwdriver-wrench"></i><span>Torn<strong>Dash</strong> Admin</span></div>
+      <h1>Admin Login</h1>
+      <p class="subtitle">Sign in to manage fake players.</p>
+
+      <form id="loginForm" novalidate>
+        <div class="input-wrap">
+          <i class="fa-solid fa-user input-icon" aria-hidden="true"></i>
+          <input type="text" id="email" placeholder="Username" autocomplete="username" spellcheck="false" />
+        </div>
+        <div class="input-wrap" style="margin-top:12px;">
+          <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+          <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
+        </div>
+        <button type="submit" id="loginBtn" class="btn btn--primary">
+          <span class="btn-label">Sign In</span>
+          <span class="spinner" aria-hidden="true" hidden></span>
+        </button>
+      </form>
+      <div id="loginError" class="error-box" role="alert" hidden></div>
+    </div>
+  </main>
+
+  <!-- ============ EDITOR ============ -->
+  <main id="adminApp" class="view view--dashboard" hidden>
+    <header class="profile-bar">
+      <div class="profile-identity">
+        <div class="avatar" aria-hidden="true"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <div class="profile-text">
+          <h2 class="profile-name">Fake Players</h2>
+          <p class="profile-id"><span id="adminEmail">—</span></p>
+        </div>
+      </div>
+      <div class="profile-actions">
+        <button class="btn btn--primary" id="addBtn" type="button" style="width:auto;margin:0;padding:11px 16px;">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i><span>Add player</span>
+        </button>
+        <button class="btn btn--ghost" id="signOutBtn" type="button">
+          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Sign out</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="adminError" class="error-box error-box--inline" role="alert" hidden></div>
+
+    <div id="playerList" class="admin-list" aria-live="polite">
+      <p class="muted" id="listEmpty">Loading…</p>
+    </div>
+  </main>
+
+  <!-- ============ ADD / EDIT MODAL ============ -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card">
+      <div class="card-head">
+        <i class="fa-solid fa-user-pen" aria-hidden="true"></i>
+        <h3 id="modalTitle">Add player</h3>
+        <button type="button" id="modalClose" class="icon-btn" aria-label="Close" style="margin-left:auto;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="playerForm">
+        <input type="hidden" id="f_id" />
+
+        <div class="form-grid">
+          <label class="field field--wide">
+            <span>Label <small>(your reference only)</small></span>
+            <input type="text" id="f_label" placeholder="e.g. Big Hitter Demo" />
+          </label>
+          <label class="field field--wide">
+            <span>Fake API key <small>(what users type)</small></span>
+            <input type="text" id="f_api_key" placeholder="e.g. DEMO-abc123" spellcheck="false" required />
+          </label>
+
+          <label class="field"><span>Energy — current</span><input type="number" id="f_energy_current" min="0" step="1" /></label>
+          <label class="field"><span>Energy — maximum</span><input type="number" id="f_energy_maximum" min="0" step="1" /></label>
+          <label class="field"><span>Life — current</span><input type="number" id="f_life_current" min="0" step="1" /></label>
+          <label class="field"><span>Life — maximum</span><input type="number" id="f_life_maximum" min="0" step="1" /></label>
+
+          <label class="field"><span>Money on hand ($)</span><input type="number" id="f_money_onhand" min="0" step="1" /></label>
+          <label class="field"><span>Networth total ($)</span><input type="number" id="f_networth_total" min="0" step="1" /></label>
+
+          <label class="field"><span>Strength</span><input type="number" id="f_strength" min="0" step="1" /></label>
+          <label class="field"><span>Defense</span><input type="number" id="f_defense" min="0" step="1" /></label>
+          <label class="field"><span>Speed</span><input type="number" id="f_speed" min="0" step="1" /></label>
+          <label class="field"><span>Dexterity</span><input type="number" id="f_dexterity" min="0" step="1" /></label>
+
+          <label class="field"><span>Manual labor</span><input type="number" id="f_manual_labor" min="0" step="1" /></label>
+          <label class="field"><span>Intelligence</span><input type="number" id="f_intelligence" min="0" step="1" /></label>
+          <label class="field"><span>Endurance</span><input type="number" id="f_endurance" min="0" step="1" /></label>
+        </div>
+
+        <div id="formError" class="error-box" role="alert" hidden></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn--ghost" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn--primary" id="saveBtn" style="width:auto;margin:0;padding:12px 20px;">
+            <span class="btn-label">Save player</span>
+            <span class="spinner" aria-hidden="true" hidden></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
