@@ -19,7 +19,8 @@ const SELECTIONS = [
   'bars',         // energy, nerve, happy, life, chain, server_time
   'battlestats',  // strength, speed, dexterity, defense, total
   'workstats',    // manual_labor, intelligence, endurance
-  'money',        // money_onhand, points, vault, city bank, networth{}
+  'money',        // money_onhand, points, vault, city bank
+  'networth',     // wallet, bank, points, items, properties, stockmarket… total
   'cooldowns',    // drug, medical, booster
   'jobpoints',    // job points per city job / company
   'education',    // current course + time left
@@ -441,21 +442,12 @@ function renderNetworth(d) {
   const nw = d.networth;
   if (!nw || nw.total == null) return card('networth', 'Networth', 'fa-sack-dollar', accessNote());
 
-  const rows = Object.entries(NETWORTH_LABELS)
-    .filter(([k]) => nw[k] != null && Math.abs(nw[k]) >= 1)
-    .sort((a, b) => Math.abs(nw[b[0]]) - Math.abs(nw[a[0]]))
-    .slice(0, 8)
-    .map(([k, label]) =>
-      `<div class="kv__row"><span class="kv__k">${label}</span><span class="kv__v ${nw[k] < 0 ? 'muted' : ''}">${money(nw[k])}</span></div>`
-    ).join('');
-
   const body = `
     <div class="bignum">
       <div class="bignum__val cyan">${money(nw.total)}</div>
       <div class="bignum__sub">≈ $${compact(nw.total)} total networth</div>
-    </div>
-    <div class="kv">${rows}</div>`;
-  return card('networth', 'Networth', 'fa-sack-dollar', body, { wide: true });
+    </div>`;
+  return card('networth', 'Networth', 'fa-sack-dollar', body);
 }
 
 /* ----- Battle stats ----- */
