@@ -1,249 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TornDash — Player Stats Dashboard</title>
-  <meta name="description" content="A secure, 100% client-side dashboard for viewing your live Torn City player stats." />
+  <title>TornDash — Torn City Stats Dashboard</title>
+  <meta name="description" content="A clean, fully client-side dashboard for Torn City. Enter your API key and view real-time stats. Your key never leaves your browser." />
 
-  <!-- Inline SVG favicon (crossed swords) so no extra request / 404 -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%9A%94%EF%B8%8F</text></svg>" />
-
-  <!-- ============ CDN ASSETS ============ -->
-  <!-- Google Fonts: Orbitron (brand), Rajdhani (numbers), Inter (body) -->
+  <!-- ============ CDN: Google Fonts ============ -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
-    rel="stylesheet" />
-  <!-- Font Awesome (icons) via cdnjs -->
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- ============ CDN: Font Awesome Icons ============ -->
   <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    referrerpolicy="no-referrer" />
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    referrerpolicy="no-referrer"
+  />
 
-  <!-- Local stylesheet -->
+  <!-- ============ Local styles ============ -->
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <!-- ===================================================================== -->
-  <!-- LANDING VIEW — API key entry                                          -->
-  <!-- ===================================================================== -->
-  <main id="landing" class="view view--landing" aria-labelledby="landingTitle">
-    <div class="landing-card">
+  <!-- ==================================================================== -->
+  <!-- LANDING VIEW — API key entry + stat selection                        -->
+  <!-- ==================================================================== -->
+  <main id="landing" class="landing">
+    <div class="landing__bg" aria-hidden="true"></div>
+
+    <section class="landing__card">
       <div class="brand">
-        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-        <span>Torn<strong>Dash</strong></span>
+        <i class="fa-solid fa-skull brand__mark" aria-hidden="true"></i>
+        <h1 class="brand__name">TORN<span>DASH</span></h1>
       </div>
+      <p class="landing__tag">
+        Real-time Torn City stats — <strong>99% client-side</strong>. Your key never leaves your browser.
+      </p>
 
-      <h1 id="landingTitle">Player Stats Dashboard</h1>
-      <p class="subtitle">Enter your Torn API key to load your live stats.</p>
+      <form id="keyForm" class="keyform" autocomplete="off" novalidate>
+        <!-- API key field -->
+        <label class="field" for="apiKey">
+          <span class="field__label"><i class="fa-solid fa-key"></i> Torn API Key</span>
+          <div class="field__row">
+            <input
+              id="apiKey"
+              name="apiKey"
+              type="password"
+              class="field__input"
+              placeholder="Enter your 16-character API key"
+              spellcheck="false"
+              autocomplete="off"
+              maxlength="24"
+              aria-describedby="secureNote"
+            />
+            <button type="button" id="toggleKey" class="iconbtn" title="Show / hide key" aria-label="Show or hide key">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </label>
 
-      <form id="keyForm" novalidate>
-        <label for="apiKey" class="sr-only">Torn API Key</label>
-        <div class="input-wrap">
-          <i class="fa-solid fa-key input-icon" aria-hidden="true"></i>
-          <input
-            type="password"
-            id="apiKey"
-            name="apiKey"
-            placeholder="Enter your Torn API Key"
-            autocomplete="off"
-            autocapitalize="off"
-            spellcheck="false"
-            inputmode="latin" />
-          <button type="button" id="toggleKey" class="icon-btn" aria-label="Show or hide API key">
-            <i class="fa-solid fa-eye" aria-hidden="true"></i>
-          </button>
+        <!-- Options row -->
+        <div class="keyform__opts">
+          <label class="check">
+            <input type="checkbox" id="rememberKey" />
+            <span>Remember key on this device</span>
+          </label>
+          <a class="link" href="https://www.torn.com/preferences.php#tab=api" target="_blank" rel="noopener">
+            Get an API key <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
         </div>
 
-        <button type="submit" id="fetchBtn" class="btn btn--primary">
-          <span class="btn-label">Fetch Stats</span>
-          <span class="spinner" aria-hidden="true" hidden></span>
+        <!-- Stat / section selection -->
+        <fieldset class="selector">
+          <legend class="selector__legend">
+            <i class="fa-solid fa-sliders"></i> Choose what to display
+          </legend>
+          <div id="sectionToggles" class="selector__grid" role="group" aria-label="Sections to display">
+            <!-- Toggle chips generated by app.js -->
+          </div>
+        </fieldset>
+
+        <!-- Submit -->
+        <button type="submit" id="fetchBtn" class="btn btn--primary btn--block">
+          <span class="btn__label"><i class="fa-solid fa-bolt"></i> Fetch Stats</span>
+          <span class="btn__spinner" hidden><span class="spinner" aria-hidden="true"></span> Fetching…</span>
         </button>
+
+        <!-- Error box -->
+        <div id="landingError" class="alert alert--error" role="alert" hidden></div>
       </form>
 
-      <!-- Inline error message target -->
-      <div id="errorBox" class="error-box" role="alert" hidden></div>
-
-      <!-- Client-side security reassurance -->
-      <div class="notice">
-        <i class="fa-solid fa-lock" aria-hidden="true"></i>
-        <p>
-          Your key is processed <strong>entirely inside your browser</strong> and sent only to Torn's
-          official API. It is <strong>never stored, logged, or shared</strong> with any third-party server.
-        </p>
-      </div>
-
-      <p class="hint">
-        Tip: a <strong>Full&nbsp;Access</strong> key lets battle, work, money &amp; networth stats load.
-        <a href="https://www.torn.com/preferences.php#tab=api" target="_blank" rel="noopener noreferrer">
-          Get a key <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
-        </a>
+      <p id="secureNote" class="landing__secure">
+        <i class="fa-solid fa-shield-halved"></i>
+        Your key is used only to call Torn's API directly from your browser over HTTPS. It is
+        <strong>never</strong> sent to any third-party server. Battle &amp; work stats require a
+        <strong>Limited</strong> or <strong>Full</strong> access key.
       </p>
-
-      <p class="credit">
-        Made by <a href="https://www.torn.com/profiles.php?XID=3349130" target="_blank" rel="noopener noreferrer">SherbZ [3349130]</a>
-        · <i class="fa-solid fa-gift" aria-hidden="true"></i> Feel free to send a gift if you like the tool. JUST A PROTOTYPE  Much more to come! 2023
-      </p>
-    </div>
-  </main>
-
-  <!-- ===================================================================== -->
-  <!-- DASHBOARD VIEW — stats (hidden until a successful fetch)               -->
-  <!-- ===================================================================== -->
-  <main id="dashboard" class="view view--dashboard" aria-label="Player stats dashboard" hidden>
-    <!-- Header (player name and ID are intentionally not shown) -->
-    <header class="profile-bar">
-      <div class="profile-identity">
-        <div class="avatar" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="profile-text">
-          <h2 class="profile-name">Player Dashboard</h2>
-          <p class="profile-id">Live Torn City stats</p>
-        </div>
-      </div>
-
-      <div class="profile-actions">
-        <span class="updated" id="lastUpdated" title="Last refreshed"></span>
-        <button class="btn btn--ghost" id="refreshBtn" type="button">
-          <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
-          <span>Refresh</span>
-        </button>
-        <button class="btn btn--ghost" id="logoutBtn" type="button">
-          <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
-          <span>Log Out</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- A slim inline error strip used for refresh failures -->
-    <div id="dashError" class="error-box error-box--inline" role="alert" hidden></div>
-
-    <!-- Stats grid -->
-    <section class="grid">
-      <!-- Core Resources -->
-      <article class="card">
-        <div class="card-head">
-          <i class="fa-solid fa-bolt" aria-hidden="true"></i>
-          <h3>Core Resources</h3>
-        </div>
-
-        <div class="resource">
-          <div class="resource-top">
-            <span class="resource-label"><i class="fa-solid fa-bolt-lightning" aria-hidden="true"></i> Energy</span>
-            <span id="energyText" class="mono">— / —</span>
-          </div>
-          <div class="bar" role="progressbar" aria-label="Energy">
-            <div class="bar-fill" id="energyBar"></div>
-          </div>
-        </div>
-
-        <div class="resource">
-          <div class="resource-top">
-            <span class="resource-label resource-label--life"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> Life</span>
-            <span id="lifeText" class="mono">— / —</span>
-          </div>
-          <div class="bar" role="progressbar" aria-label="Life">
-            <div class="bar-fill bar-fill--life" id="lifeBar"></div>
-          </div>
-        </div>
-
-        <div class="resource">
-          <div class="resource-top">
-            <span class="resource-label"><i class="fa-solid fa-wallet" aria-hidden="true"></i> Money on Hand</span>
-          </div>
-          <div class="big-value money" id="money">—</div>
-        </div>
-      </article>
-
-      <!-- Networth -->
-      <article class="card card--feature">
-        <div class="card-head">
-          <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-          <h3>Networth</h3>
-        </div>
-        <div class="networth-wrap">
-          <div class="big-value money glow" id="networth">—</div>
-          <p class="muted">Total estimated networth</p>
-        </div>
-      </article>
-
-      <!-- Battle Stats -->
-      <article class="card card--wide">
-        <div class="card-head">
-          <i class="fa-solid fa-hand-fist" aria-hidden="true"></i>
-          <h3>Battle Stats</h3>
-        </div>
-        <div class="stat-grid">
-          <div class="stat">
-            <span class="stat-label"><i class="fa-solid fa-hand-fist" aria-hidden="true"></i> Strength</span>
-            <span class="stat-val" id="strength">—</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label"><i class="fa-solid fa-person-running" aria-hidden="true"></i> Speed</span>
-            <span class="stat-val" id="speed">—</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> Dexterity</span>
-            <span class="stat-val" id="dexterity">—</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Defense</span>
-            <span class="stat-val" id="defense">—</span>
-          </div>
-        </div>
-        <div class="total-row">
-          <span><i class="fa-solid fa-star" aria-hidden="true"></i> Total Battle Stats</span>
-          <span class="total-val" id="battleTotal">—</span>
-        </div>
-      </article>
-
-      <!-- Working Stats -->
-      <article class="card card--wide">
-        <div class="card-head">
-          <i class="fa-solid fa-briefcase" aria-hidden="true"></i>
-          <h3>Working Stats</h3>
-        </div>
-        <div class="stat-grid stat-grid--3">
-          <div class="stat">
-            <span class="stat-label"><i class="fa-solid fa-hammer" aria-hidden="true"></i> Manual Labor</span>
-            <span class="stat-val" id="manual">—</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label"><i class="fa-solid fa-brain" aria-hidden="true"></i> Intelligence</span>
-            <span class="stat-val" id="intelligence">—</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> Endurance</span>
-            <span class="stat-val" id="endurance">—</span>
-          </div>
-        </div>
-        <div class="total-row">
-          <span><i class="fa-solid fa-star" aria-hidden="true"></i> Total Working Stats</span>
-          <span class="total-val" id="workTotal">—</span>
-        </div>
-      </article>
     </section>
 
-    <footer class="dash-footer">
-      <p>
-        <i class="fa-solid fa-lock" aria-hidden="true"></i>
-        Data fetched directly from Torn's official API in your browser. Your key stays on this device only.
-      </p>
-      <p class="credit">
-        Made by <a href="https://www.torn.com/profiles.php?XID=3349130" target="_blank" rel="noopener noreferrer">SherbZ [3349130]</a>
-        · <i class="fa-solid fa-gift" aria-hidden="true"></i> Feel free to send a gift if you like the tool. JUST A PROTOTYPE  Much more to come! 2023
-      </p>
+    <footer class="landing__foot">
+      Not affiliated with Torn. Data © Torn City · Built with vanilla HTML, CSS &amp; JS.
     </footer>
   </main>
 
-  <!-- Supabase (optional backend for editable fake players) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
-  <script src="supabase-client.js"></script>
+  <!-- ==================================================================== -->
+  <!-- DASHBOARD VIEW — revealed after a successful fetch                    -->
+  <!-- ==================================================================== -->
+  <div id="dashboard" class="dash" hidden>
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand brand--sm">
+        <i class="fa-solid fa-skull brand__mark" aria-hidden="true"></i>
+        <span class="brand__name">TORN<span>DASH</span></span>
+      </div>
 
-  <!-- Application logic -->
+      <div class="topbar__actions">
+        <span id="lastUpdated" class="updated" title="Last updated"></span>
+        <label class="check check--inline" title="Auto-refresh">
+          <input type="checkbox" id="autoRefresh" />
+          <span>Auto</span>
+        </label>
+        <select id="refreshInterval" class="select select--sm" title="Auto-refresh interval" aria-label="Auto-refresh interval">
+          <option value="15">15s</option>
+          <option value="30" selected>30s</option>
+          <option value="60">60s</option>
+          <option value="120">2m</option>
+        </select>
+        <button id="customizeBtn" class="btn btn--ghost btn--sm"><i class="fa-solid fa-sliders"></i><span class="hide-sm"> Customize</span></button>
+        <button id="refreshBtn" class="btn btn--ghost btn--sm"><i class="fa-solid fa-rotate"></i><span class="hide-sm"> Refresh</span></button>
+        <button id="logoutBtn" class="btn btn--ghost btn--sm"><i class="fa-solid fa-right-from-bracket"></i><span class="hide-sm"> Change key</span></button>
+      </div>
+    </header>
+
+    <!-- Customize panel (mirror of landing toggles) -->
+    <div id="customizePanel" class="customize" hidden>
+      <div class="customize__inner">
+        <span class="customize__title"><i class="fa-solid fa-eye"></i> Visible sections</span>
+        <div id="dashToggles" class="selector__grid" role="group" aria-label="Visible sections"></div>
+      </div>
+    </div>
+
+    <!-- Inline error / notice for refresh failures -->
+    <div id="dashError" class="alert alert--error dash__alert" role="alert" hidden></div>
+
+    <!-- Profile banner -->
+    <section id="card-profile" class="profile" data-section="profile"><!-- rendered by JS --></section>
+
+    <!-- Responsive card grid -->
+    <main id="grid" class="grid"><!-- cards rendered by JS --></main>
+
+    <footer class="dash__foot">
+      TornDash · client-side only · not affiliated with Torn City
+    </footer>
+  </div>
+
+  <!-- ============ App logic ============ -->
   <script src="app.js"></script>
 </body>
 </html>
