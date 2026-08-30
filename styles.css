@@ -1242,27 +1242,6 @@ h1, h2, h3 { margin: 0; font-family: var(--font-head); }
 }
 .kpi__value.cyan { color: var(--accent-2); }
 .kpi__value.violet { color: var(--accent-3); }
-.kpi__foot {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 30px;
-}
-.kpi__delta {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 7px;
-  border-radius: 999px;
-}
-.kpi__delta.up   { color: #6dffb8; background: rgba(0, 230, 118, 0.1); }
-.kpi__delta.down { color: #ff97a8; background: rgba(255, 84, 112, 0.1); }
-.kpi__spark { margin-left: auto; opacity: 0.9; display: inline-flex; }
 .spark { display: block; }
 
 /* ---------- Overview grid ---------- */
