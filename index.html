@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TornDash — Torn City Companion Dashboard</title>
-  <meta name="description"
-    content="A premium, fully client-side companion dashboard for Torn City. Enter your API key and explore real-time stats, networth, combat logs, personal-stat trends and more. Your key never leaves your browser." />
+  <meta name="description" content="A premium, fully client-side companion dashboard for Torn City. Enter your API key and explore real-time stats, networth, combat logs, personal-stat trends and more. Your key never leaves your browser." />
   <meta name="theme-color" content="#060a13" />
 
   <!-- ============ CDN: Google Fonts ============ -->
@@ -14,16 +12,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet" />
+    rel="stylesheet"
+  />
 
   <!-- ============ CDN: Font Awesome Icons ============ -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    referrerpolicy="no-referrer" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    referrerpolicy="no-referrer"
+  />
 
   <!-- ============ Local styles ============ -->
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
   <!-- ==================================================================== -->
   <!-- LANDING VIEW — API key entry                                          -->
@@ -44,9 +45,17 @@
         <label class="field" for="apiKey">
           <span class="field__label"><i class="fa-solid fa-key"></i> API Key</span>
           <div class="field__row">
-            <input id="apiKey" name="apiKey" type="password" class="field__input"
-              placeholder="Enter your 16-character API key" spellcheck="false" autocomplete="off" maxlength="24"
-              aria-describedby="secureNote" />
+            <input
+              id="apiKey"
+              name="apiKey"
+              type="password"
+              class="field__input"
+              placeholder="Enter your 16-character API key"
+              spellcheck="false"
+              autocomplete="off"
+              maxlength="24"
+              aria-describedby="secureNote"
+            />
             <button type="button" id="toggleKey" class="iconbtn" title="Show / hide key" aria-label="Show or hide key">
               <i class="fa-solid fa-eye"></i>
             </button>
@@ -73,20 +82,16 @@
 
       <!-- Customize what to show (before launch) -->
       <div class="customize">
-        <button type="button" id="customizeToggle" class="customize__toggle" aria-expanded="false"
-          aria-controls="customizePanel">
-          <span class="customize__toggle-l"><i class="fa-solid fa-sliders"></i> Choose what to show</span>
+        <button type="button" id="customizeToggle" class="customize__toggle" aria-expanded="false" aria-controls="customizePanel">
+          <span class="customize__toggle-l"><i class="fa-solid fa-sliders"></i> Customize Your Dashboard</span>
           <span class="customize__count" id="customizeCount"></span>
           <i class="fa-solid fa-chevron-down customize__chev"></i>
         </button>
         <div id="customizePanel" class="customize__panel" hidden>
           <div class="customize__bulk">
-            <button type="button" class="btn btn--ghost btn--sm" data-bulk="all"><i
-                class="fa-solid fa-check-double"></i> All</button>
-            <button type="button" class="btn btn--ghost btn--sm" data-bulk="none"><i class="fa-solid fa-xmark"></i>
-              None</button>
-            <button type="button" class="btn btn--ghost btn--sm" data-bulk="default"><i
-                class="fa-solid fa-rotate-left"></i> Defaults</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-bulk="all"><i class="fa-solid fa-check-double"></i> All</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-bulk="none"><i class="fa-solid fa-xmark"></i> None</button>
+            <button type="button" class="btn btn--ghost btn--sm" data-bulk="default"><i class="fa-solid fa-rotate-left"></i> Defaults</button>
           </div>
           <div id="customizeGroups" class="customize__groups"><!-- rendered by JS --></div>
         </div>
@@ -115,47 +120,6 @@
     </footer>
   </main>
 
-  <main id="manageView" class="manage" hidden>
-    <section class="manage__panel">
-      <div class="manage__head">
-        <div>
-          <div class="brand brand--sm"><i class="fa-solid fa-skull brand__mark" aria-hidden="true"></i><span class="brand__name">TORN<span>DASH</span></span></div>
-          <h2>Data access</h2>
-        </div>
-        <button type="button" id="manageBackBtn" class="iconbtn" title="Back" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
-      </div>
-
-      <form id="manageLogin" class="manage__login" novalidate>
-        <label class="field"><span class="field__label">Email</span><input id="manageEmail" class="field__input" type="email" autocomplete="email" required /></label>
-        <label class="field"><span class="field__label">Password</span><input id="managePassword" class="field__input" type="password" autocomplete="current-password" required /></label>
-        <button type="submit" class="btn btn--primary"><i class="fa-solid fa-right-to-bracket"></i> Sign in</button>
-      </form>
-
-      <form id="manageEditor" class="manage__editor" hidden>
-        <div class="manage__toolbar"><span id="manageUser" class="updated"></span><button type="button" id="manageSignOut" class="btn btn--ghost btn--sm"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button></div>
-        <div class="manage__grid">
-          <label class="field"><span class="field__label">Name</span><input class="field__input" name="name" required /></label>
-          <label class="field"><span class="field__label">Player ID</span><input class="field__input" name="player_id" type="number" min="1" required /></label>
-          <label class="field"><span class="field__label">Rank</span><input class="field__input" name="rank" /></label>
-          <label class="field"><span class="field__label">Level</span><input class="field__input" name="level" type="number" min="1" max="100" required /></label>
-          <label class="field"><span class="field__label">Honor</span><input class="field__input" name="honor" type="number" min="0" /></label>
-          <label class="field"><span class="field__label">Property</span><input class="field__input" name="property" /></label>
-          <label class="field"><span class="field__label">Money</span><input class="field__input" name="money_onhand" type="number" min="0" step="1" /></label>
-          <label class="field"><span class="field__label">Networth</span><input class="field__input" name="networth" type="number" min="0" step="1" /></label>
-          <label class="field"><span class="field__label">Strength</span><input class="field__input" name="strength" type="number" min="0" step="1" /></label>
-          <label class="field"><span class="field__label">Defense</span><input class="field__input" name="defense" type="number" min="0" step="1" /></label>
-          <label class="field"><span class="field__label">Speed</span><input class="field__input" name="speed" type="number" min="0" step="1" /></label>
-          <label class="field"><span class="field__label">Dexterity</span><input class="field__input" name="dexterity" type="number" min="0" step="1" /></label>
-          <label class="field"><span class="field__label">Energy</span><input class="field__input" name="energy" type="number" min="0" /></label>
-          <label class="field"><span class="field__label">Nerve</span><input class="field__input" name="nerve" type="number" min="0" /></label>
-          <label class="field"><span class="field__label">Happy</span><input class="field__input" name="happy" type="number" min="0" /></label>
-        </div>
-        <button type="submit" class="btn btn--primary btn--block"><i class="fa-solid fa-floppy-disk"></i> Save changes</button>
-      </form>
-      <div id="manageNotice" class="alert" role="status" hidden></div>
-    </section>
-  </main>
-
   <!-- ==================================================================== -->
   <!-- DASHBOARD VIEW — revealed after a successful fetch                    -->
   <!-- ==================================================================== -->
@@ -169,10 +133,8 @@
 
       <div class="topbar__actions">
         <span id="lastUpdated" class="updated" title="Last updated"></span>
-        <button id="refreshBtn" class="btn btn--ghost btn--sm"><i class="fa-solid fa-rotate"></i><span class="hide-sm">
-            Refresh</span></button>
-        <button id="logoutBtn" class="btn btn--ghost btn--sm"><i class="fa-solid fa-right-from-bracket"></i><span
-            class="hide-sm"> Log Out</span></button>
+        <button id="refreshBtn" class="btn btn--ghost btn--sm"><i class="fa-solid fa-rotate"></i><span class="hide-sm"> Refresh</span></button>
+        <button id="logoutBtn" class="btn btn--ghost btn--sm"><i class="fa-solid fa-right-from-bracket"></i><span class="hide-sm"> Change key</span></button>
       </div>
     </header>
 
@@ -189,7 +151,7 @@
     <main id="tabContent" class="tabcontent"><!-- rendered by JS --></main>
 
     <footer class="dash__foot">
-      TornDash · client-side only · not affiliated with Torn City - By SherbZ
+      TornDash · client-side only · not affiliated with Torn City
     </footer>
   </div>
 
@@ -206,12 +168,10 @@
     </div>
     <div class="loader__brand">TORN<span>DASH</span></div>
     <div class="loader__status" id="loaderStatus">Connecting to Torn…</div>
-    <div class="loader__bar">
-      <div class="loader__bar-fill"></div>
-    </div>
+    <div class="loader__bar"><div class="loader__bar-fill"></div></div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- ============ App logic (order matters: charts → sections → app) ============ -->
   <script src="app.js"></script>
 </body>
-
 </html>
